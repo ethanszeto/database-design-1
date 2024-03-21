@@ -17,4 +17,12 @@ export default class RequestController {
   static async getThreadId(req, res) {
     Connection.getThreadId(req, res);
   }
+
+  static async getSpellTypes(req, res) {
+    Connection.makeQuery(req, res, "SELECT type_name FROM spell_type");
+  }
+
+  static async getSpellsWithType(req, res) {
+    Connection.makeQuery(req, res, `CALL spell_has_type("${req.body.type}")`);
+  }
 }

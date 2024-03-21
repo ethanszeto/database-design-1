@@ -31,6 +31,7 @@ export default class Connection {
       if (err) {
         console.log(err);
         res.send({ result: "Failed to Connect" });
+        this.close(this.pool);
         return;
       }
       if (connection) {
@@ -42,8 +43,34 @@ export default class Connection {
     });
   }
 
+  static async makeQuery(req, res, sql) {
+    if (!this.pool) {
+      res.send({ result: "Not logged in!" });
+      return;
+    }
+
+    this.pool.getConnection((err, connection) => {
+      if (err) {
+        console.log(err);
+        res.send({ result: "Failed to Connect" });
+        this.close(this.pool);
+        return;
+      }
+      if (connection) {
+        console.log("connected as id " + connection.threadId);
+        connection.query(sql, (err, rows, fields) => {
+          if (err) {
+            res.send({ result: "Retrieval Error" });
+          }
+          res.send(rows);
+        });
+        connection.release();
+        return;
+      }
+    });
+  }
+
   static async close(pool) {
-    //connection.end();
     pool.end();
   }
 }

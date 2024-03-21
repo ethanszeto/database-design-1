@@ -3,13 +3,17 @@ var states = {
   processUsername: "Entering username",
   promptPassword: "Prompt password",
   processPassword: "Entering password",
-  promptInvalidLogin: "Prompt Invalid Login",
+  promptInvalidLogin: "Prompt invalid login",
+  promptOptionMenu: "Prompt option menu",
+  processOptionSelection: "Process option selectiom",
   promptSpellType: "Prompt spell type",
-  processSpellType: "Prompt spell type",
+  processSpellType: "Process spell type",
+  promptInvalidSpellType: "Prompt invalid spell type",
 };
 
 var enteredUsername;
 var enteredPassword;
+var spells = [];
 
 var currentState = states.promptUsername;
 
@@ -34,8 +38,17 @@ function program(command) {
     case states.promptInvalidLogin:
       promptInvalidLogin();
       break;
+    case states.promptOptionMenu:
+      promptOptionMenu();
+      break;
+    case states.processOptionSelection:
+      processOptionSelection(command);
+      break;
     case states.promptSpellType:
       promptSpellType();
+      break;
+    case states.processSpellType:
+      processSpellType(command);
       break;
     default:
       break;
@@ -77,7 +90,7 @@ async function processPassword(command) {
   if (loginResult.result === "Pool Created" && parseInt(threadId.result) >= 0) {
     // good login credentials
     console.log(loginResult.result + " | " + threadId.result);
-    currentState = states.promptSpellType;
+    currentState = states.promptOptionMenu;
     program("");
   } else {
     // bad login credentials
@@ -93,11 +106,52 @@ function promptInvalidLogin() {
   program("");
 }
 
+function promptOptionMenu() {
+  let prompt = "\nEnter a number corresponding to an option:\n1. Display all spell types\n2. Disconnect and close\n";
+  addTextTerminalOutput(prompt);
+  currentState = states.processOptionSelection;
+}
+
+function processOptionSelection(command) {
+  if (command == "1") {
+    currentState = states.promptSpellType;
+    program("");
+  } else if (command == "2") {
+    //call some deactivate method that does cleanup.
+  } else {
+    let prompt = "\nInvalid Selection. Try again.\n";
+    addTextTerminalOutput(prompt);
+    program("");
+  }
+}
+
 async function promptSpellType() {
-  let prompt = "\n\n";
-  const spells = await postJSON({}, "get-spell-types");
+  let prompt = "\nHere are a list of spell types:\n";
+  if (spells.length == 0) {
+    const rawSpells = await postJSON({}, "get-spell-types");
+
+    rawSpells.forEach((spellType) => {
+      spells.push(spellType.type_name.toLowerCase());
+    });
+  }
+
+  spells.forEach((spellType) => {
+    prompt += spellType + ", ";
+  });
+
+  prompt += "\n\nEnter a spell type\n";
   addTextTerminalOutput(prompt);
   currentState = states.processSpellType;
+}
+
+async function processSpellType(command) {
+  if (spells.includes(command.toLowerCase())) {
+    const rawSpells = await postJSON({ type: command }, "get-spells-with-type");
+    console.log(rawSpells);
+  } else {
+    currentState = states.promptInvalidSpellType;
+    program("");
+  }
 }
 
 /////////////////////////////////////////////////

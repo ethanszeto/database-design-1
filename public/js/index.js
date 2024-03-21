@@ -4,7 +4,7 @@ document.getElementById("terminal-input").addEventListener("keypress", async (e)
     addTextTerminalOutput("> " + command);
     document.getElementById("terminal-input").value = "";
     // process command
-    await program(command.trim());
+    program(command.trim());
   }
 });
 

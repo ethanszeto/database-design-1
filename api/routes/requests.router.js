@@ -11,4 +11,8 @@ router.route("/login").post(RequestController.login);
 
 router.route("/thread-id").post(RequestController.getThreadId);
 
+router.route("/get-spell-types").post(RequestController.getSpellTypes);
+
+router.route("/get-spells-with-type").post(RequestController.getSpellsWithType);
+
 export default router;
