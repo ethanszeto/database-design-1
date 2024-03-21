@@ -1,10 +1,10 @@
-document.getElementById("terminal-input").addEventListener("keypress", (e) => {
+document.getElementById("terminal-input").addEventListener("keypress", async (e) => {
   if (e.key === "Enter") {
     var command = document.getElementById("terminal-input").value + "\n";
-    addTextTerminalOutput(command);
-    // process command
+    addTextTerminalOutput("> " + command);
     document.getElementById("terminal-input").value = "";
-    resizeTerminalOutput();
+    // process command
+    await program(command.trim());
   }
 });
 
@@ -15,4 +15,5 @@ function resizeTerminalOutput() {
 
 function addTextTerminalOutput(str) {
   document.getElementById("terminal-output").value += str;
+  resizeTerminalOutput();
 }
