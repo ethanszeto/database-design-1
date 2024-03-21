@@ -1,0 +1,10 @@
+#local dev env only
+services:
+  app:
+    build: .
+    container_name: hw8-container
+    command: npm start
+    ports:
+      - 4321:4321
+    volumes:
+      - .:/app

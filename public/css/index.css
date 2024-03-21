@@ -1,0 +1,19 @@
+body {
+  background-color: black;
+  color: greenyellow;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.terminal {
+  background-color: black;
+  color: greenyellow;
+  font-family: "Courier New", Courier, monospace;
+  resize: none;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+#terminal-output {
+  user-select: none;
+}
