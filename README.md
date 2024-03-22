@@ -42,4 +42,11 @@ docker compose up -d
 
 ### Troubleshooting
 
-- User connection issues:
+- User connection issues: Grant Access to Node.js Application:
+  - In MySQL Workbench, run the following query, where password is the password for the user named "root"
+  - ```sql
+    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+    flush privileges;
+    ```
+
+- Port intersection: If you have another application running on port 4321, you must deactivate it in order to run this project.
