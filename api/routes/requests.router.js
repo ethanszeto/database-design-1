@@ -15,4 +15,6 @@ router.route("/get-spell-types").post(RequestController.getSpellTypes);
 
 router.route("/get-spells-with-type").post(RequestController.getSpellsWithType);
 
+router.route("/close").post(RequestController.closeConnection);
+
 export default router;

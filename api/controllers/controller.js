@@ -25,4 +25,9 @@ export default class RequestController {
   static async getSpellsWithType(req, res) {
     Connection.makeQuery(req, res, `CALL spell_has_type("${req.body.type}")`);
   }
+
+  static async closeConnection(req, res) {
+    Connection.close();
+    res.send({ result: "Done." });
+  }
 }

@@ -70,7 +70,7 @@ export default class Connection {
     });
   }
 
-  static async close(pool) {
-    pool.end();
+  static async close() {
+    this.pool.end();
   }
 }

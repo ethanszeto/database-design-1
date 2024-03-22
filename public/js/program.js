@@ -5,10 +5,11 @@ var states = {
   processPassword: "Entering password",
   promptInvalidLogin: "Prompt invalid login",
   promptOptionMenu: "Prompt option menu",
-  processOptionSelection: "Process option selectiom",
+  processOptionSelection: "Process option selection",
   promptSpellType: "Prompt spell type",
   processSpellType: "Process spell type",
   promptInvalidSpellType: "Prompt invalid spell type",
+  promptClose: "Prompt close",
 };
 
 var enteredUsername;
@@ -49,6 +50,12 @@ function program(command) {
       break;
     case states.processSpellType:
       processSpellType(command);
+      break;
+    case states.promptInvalidSpellType:
+      promptInvalidSpellType();
+      break;
+    case states.promptClose:
+      promptClose();
       break;
     default:
       break;
@@ -113,14 +120,17 @@ function promptOptionMenu() {
 }
 
 function processOptionSelection(command) {
-  if (command == "1") {
+  if (command === "1") {
     currentState = states.promptSpellType;
     program("");
-  } else if (command == "2") {
-    //call some deactivate method that does cleanup.
+  } else if (command === "2") {
+    postJSON({}, "close");
+    currentState = states.promptClose;
+    program("");
   } else {
     let prompt = "\nInvalid Selection. Try again.\n";
     addTextTerminalOutput(prompt);
+    currentState = states.promptOptionMenu;
     program("");
   }
 }
@@ -146,12 +156,33 @@ async function promptSpellType() {
 
 async function processSpellType(command) {
   if (spells.includes(command.toLowerCase())) {
+    let prompt = `\nSpells of type ${command}:\n`;
     const rawSpells = await postJSON({ type: command }, "get-spells-with-type");
     console.log(rawSpells);
+    rawSpells[0].forEach((spell) => {
+      prompt += `id: ${spell.id} --- name: ${spell.name} --- alias: ${spell.alias}\n`;
+    });
+    addTextTerminalOutput(prompt);
+    currentState = states.promptOptionMenu;
+    program("");
   } else {
     currentState = states.promptInvalidSpellType;
     program("");
   }
+}
+
+function promptInvalidSpellType() {
+  let prompt = "\nInvalid spell type give. Try again.\n";
+  addTextTerminalOutput(prompt);
+  currentState = states.promptSpellType;
+  program("");
+}
+
+function promptClose() {
+  let prompt = "\nClosed MySQL Connection Pool.\n";
+  addTextTerminalOutput(prompt);
+  document.getElementById("terminal-input").readOnly = true;
+  document.getElementById("terminal-input").value = "Process Ended.";
 }
 
 /////////////////////////////////////////////////

@@ -16,4 +16,12 @@ function resizeTerminalOutput() {
 function addTextTerminalOutput(str) {
   document.getElementById("terminal-output").value += str;
   resizeTerminalOutput();
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  // Use setTimeout to allow DOM updates before scrolling
+  setTimeout(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, 0);
 }
